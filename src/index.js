@@ -1,7 +1,13 @@
+/*
+ * Maintained by jemo from 2021.2.17 to now
+ * Created by jemo on 2021.2.17 17:34:09
+ * index
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import App from './components/App';
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
