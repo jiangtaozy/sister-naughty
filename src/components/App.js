@@ -4,10 +4,12 @@
  * App
  */
 
+import ProductWarehouse from './ProductWarehouse';
+
 function App() {
   return (
     <div>
-      app
+      <ProductWarehouse />
     </div>
   );
 }
