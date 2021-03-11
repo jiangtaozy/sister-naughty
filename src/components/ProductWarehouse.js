@@ -7,7 +7,6 @@
 
 import { useState, useEffect } from 'react';
 import SwipeableViews from 'react-swipeable-views';
-import Snackbar from '@material-ui/core/Snackbar';
 import { apiUrl } from '../config';
 import axios from 'axios';
 import useSnackbarState from './hooks/useSnackbarState';
@@ -17,13 +16,8 @@ function ProductWarehouse() {
   const [ list, setList ] = useState([]);
   const [ isFetchMore, setIsFetchMore ] = useState(true);
   const {
-    snackbarState: {
-      message,
-      open,
-      autoHideDuration,
-    },
+    snackbar,
     handleOpenErrorSnackbar,
-    handleCloseSnackbar,
   } = useSnackbarState();
 
   useEffect(() => {
@@ -34,9 +28,7 @@ function ProductWarehouse() {
       }
       catch(err) {
         console.error('ProductWarehouse.js-catch-error: ', err)
-        handleOpenErrorSnackbar({
-          message: `出错了：${err.message || (err.response && err.response.data)}`,
-        });
+        handleOpenErrorSnackbar(`出错了：${err.message || (err.response && err.response.data)}`);
       }
     }
     if(isFetchMore) {
@@ -81,16 +73,7 @@ function ProductWarehouse() {
         resistance>
         { imageList }
       </SwipeableViews>
-      <Snackbar
-        anchorOrigin={{
-          horizontal: 'center',
-          vertical: 'top',
-        }}
-        autoHideDuration={autoHideDuration}
-        open={open}
-        onClose={handleCloseSnackbar}
-        message={message}
-      />
+      { snackbar }
     </div>
   );
 }

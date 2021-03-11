@@ -5,6 +5,7 @@
  */
 
 import { useState } from 'react';
+import Snackbar from '@material-ui/core/Snackbar';
 
 function useSnackbarState() {
 
@@ -13,8 +14,13 @@ function useSnackbarState() {
     open: false,
     autoHideDuration: null,
   });
+  const {
+    message,
+    open,
+    autoHideDuration,
+  } = snackbarState;
 
-  const handleOpenSnackbar = ({ message }) => {
+  function handleOpenSnackbar(message) {
     setSnackbarState({
       message,
       open: true,
@@ -22,7 +28,7 @@ function useSnackbarState() {
     });
   }
 
-  const handleOpenErrorSnackbar = ({ message }) => {
+  function handleOpenErrorSnackbar(message) {
     setSnackbarState({
       message,
       open: true,
@@ -30,14 +36,27 @@ function useSnackbarState() {
     });
   }
 
-  const handleCloseSnackbar = () => {
+  function handleCloseSnackbar() {
     setSnackbarState({
       open: false,
     });
   }
 
+  const snackbar = (
+    <Snackbar
+      anchorOrigin={{
+        horizontal: 'center',
+        vertical: 'top',
+      }}
+      autoHideDuration={autoHideDuration}
+      open={open}
+      onClose={handleCloseSnackbar}
+      message={message}
+    />
+  );
+
   return {
-    snackbarState,
+    snackbar,
     handleOpenSnackbar,
     handleOpenErrorSnackbar,
     handleCloseSnackbar,
