@@ -56,7 +56,7 @@ function ProductWarehouse() {
           height: '100vh',
           objectFit: 'contain',
         }}
-        src={`${apiUrl}/${image.imgPath}`}
+        src={`${apiUrl}/image/${image.imgPath}`}
         alt=''
       />
     </div>
