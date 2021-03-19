@@ -60,7 +60,7 @@ function App() {
         redirectToGetCode();
       }
     }
-  }, [])
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div>

@@ -7,41 +7,61 @@
 
 import { useState, useEffect } from 'react';
 import SwipeableViews from 'react-swipeable-views';
+import useSnackbarState from './hooks/useSnackbarState';
 import { apiUrl } from '../config';
 import axios from 'axios';
-import useSnackbarState from './hooks/useSnackbarState';
 
 function ProductWarehouse() {
 
   const [ list, setList ] = useState([]);
-  const [ isFetchMore, setIsFetchMore ] = useState(true);
-  const {
-    snackbar,
-    handleOpenErrorSnackbar,
-  } = useSnackbarState();
+  const [ start, setStart ] = useState(Date.now());
+  const { snackbar, handleOpenErrorSnackbar } = useSnackbarState();
+
+  const fetchList = async () => {
+    try {
+      const { data } = await axios.get('/mainImagesList');
+      setList(prevList => prevList.concat(data));
+    }
+    catch(err) {
+      console.error('ProductWarehouse.js-catch-error: ', err);
+      handleOpenErrorSnackbar(`出错了：${(err.response && err.response.data) || err.message}`);
+    }
+  }
 
   useEffect(() => {
-    const fetchList = async () => {
-      try {
-        const { data } = await axios.get('/mainImagesList');
-        setList(prevList => prevList.concat(data));
-      }
-      catch(err) {
-        console.error('ProductWarehouse.js-catch-error: ', err)
-        handleOpenErrorSnackbar(`出错了：${err.message || (err.response && err.response.data)}`);
-      }
-    }
-    if(isFetchMore) {
-      fetchList();
-    }
-  }, [isFetchMore]);
+    fetchList();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const onChangeIndex = (index, indexLatest, meta) => {
+    uploadMainImageBrowseRecord(indexLatest);
     if(index === (list.length - 1)) {
-      setIsFetchMore(true);
-    } else {
-      setIsFetchMore(false);
+      fetchList();
     }
+  }
+
+  const uploadMainImageBrowseRecord = async (index) => {
+    const end = Date.now();
+    const duration = end - start;
+    const imageId = list[index].id;
+    const jwt = localStorage.getItem('jwt');
+    try {
+      const { data } = await axios.post('/mainImageBrowseRecord', {
+        jwt,
+        imageId,
+        start,
+        end,
+        duration,
+      });
+      if(data !== 'ok') {
+        console.error('ProductWarehouse.js-upload-main-image-browse-record-data-error: ', data);
+        handleOpenErrorSnackbar(`出错了：${data}`);
+      }
+    }
+    catch(err) {
+      console.error('ProductWarehouse.js-upload-main-image-browse-record-error: ', err);
+      handleOpenErrorSnackbar(`出错了：${(err.response && err.response.data) || err.message}`);
+    }
+    setStart(end);
   }
 
   const imageList = list.map((image, index) =>
